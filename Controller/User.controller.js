@@ -1,5 +1,7 @@
 const { UserModel } = require("../Model/User.model");
 const bcrypt = require("bcrypt");
+const { checkPass } = require("../utils/password");
+const { genToken } = require("../utils/generateToken");
 
 
 
@@ -92,4 +94,34 @@ const findanddelete=async (req,res)=>{
     return res.status(500).json({message:"server error",error:error.message})
   }
 }
-module.exports={addUser,findUser,findandupdate,findanddelete}
+const login=async(req,res)=>{
+  try{
+    const userEmail=req.body.Email;
+    const Password=req.body.Password;
+
+    const findUser=await UserModel.findOne({Email: userEmail})
+   
+    if(!findUser){
+       return res.status(404).json({message:"Invalid email id"})
+      }
+     const isSame = await checkPass(Password, findUser.Password)
+   if (!isSame) {
+        
+        return res.status(404).json({message:"user not found"})
+    }
+
+    const obj = {
+      id: findUser._id,
+      email: findUser.Email
+    }
+    const token = genToken(obj)
+    console.log(token)
+
+    return res.status(200).json({data: findUser, token})
+  }catch(err) {
+    console.log(err);
+    
+    return res.status(500).json({err, message: "Server error"})
+  }
+}
+module.exports={addUser,findUser,findandupdate,findanddelete,login}
