@@ -1,5 +1,7 @@
 const emailValidation = (req, res, next) => {
   const { Email } = req.body;
+  console.log(Email);
+  
   try {
     if (!Email) {
       return res.stats(404).json({ message: "email id required" });
