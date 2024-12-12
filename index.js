@@ -8,6 +8,9 @@ const connectDB=require("./DB/ConnectDB.js")
 const BlogRouter = require("./Routes/Blog.routes.js");
 app.use(express.json());
 
+
+
+
 app.get("/",(req,res)=>{
     res.send("hello world")
 })
